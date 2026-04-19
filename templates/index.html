@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>College Lost & Found | Reconnect with your items</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f4f7fc; color: #1e2a3e; line-height: 1.4; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+    .navbar { background: white; box-shadow: 0 8px 20px rgba(0,0,0,0.03), 0 2px 6px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 50; }
+    .nav-wrapper { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 16px 0; gap: 16px; }
+    .logo h1 { font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg, #1f5e3a, #2b7a4b); background-clip: text; -webkit-background-clip: text; color: transparent; }
+    .logo span { font-size: 0.9rem; font-weight: 400; color: #5c6f87; display: block; margin-top: 4px; }
+    .nav-links { display: flex; gap: 28px; flex-wrap: wrap; align-items: center; }
+    .nav-links a { text-decoration: none; font-weight: 500; color: #2c3e50; transition: 0.2s; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+    .nav-links a:hover { color: #2b7a4b; }
+    .view { display: none; animation: fadeIn 0.25s ease; }
+    .view.active-view { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
+    .hero { background: linear-gradient(120deg, #ffffff 0%, #f0f6fa 100%); border-radius: 2rem; margin: 32px 0 40px; padding: 48px 40px; text-align: center; border: 1px solid rgba(43,122,75,0.1); }
+    .hero h2 { font-size: 2.4rem; font-weight: 700; margin-bottom: 12px; }
+    .hero p { font-size: 1.2rem; color: #4a5c6c; max-width: 620px; margin: 0 auto 32px; }
+    .btn-group { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+    .btn { border: none; padding: 12px 28px; font-weight: 600; border-radius: 60px; cursor: pointer; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 10px; background: white; }
+    .btn-primary { background: #1f5e3a; color: white; box-shadow: 0 6px 14px rgba(31,94,58,0.25); }
+    .btn-primary:hover { background: #154e2f; transform: translateY(-2px); }
+    .btn-outline { border: 1px solid #cbd5e1; color: #1f5e3a; }
+    .dashboard-grid { display: flex; flex-wrap: wrap; gap: 32px; margin: 20px 0 48px; }
+    .col { flex: 1; min-width: 280px; background: white; border-radius: 28px; padding: 28px 24px; box-shadow: 0 12px 28px rgba(0,0,0,0.05); border: 1px solid #eef2f6; }
+    .col-header { display: flex; justify-content: space-between; border-bottom: 3px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 24px; }
+    .lost-header h2 { color: #c2410c; } .found-header h2 { color: #0f5b3a; }
+    .view-link { font-size: 0.85rem; background: #f1f5f9; padding: 6px 14px; border-radius: 40px; cursor: pointer; }
+    .items-list { display: flex; flex-direction: column; gap: 18px; }
+    .item-card { background: #fefefe; border-radius: 20px; padding: 18px; border: 1px solid #edf2f7; display: flex; align-items: center; gap: 16px; }
+    .item-icon { width: 48px; height: 48px; border-radius: 30px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+    .lost-icon { background: #ffede3; color: #b45309; } .found-icon { background: #e0f2e9; color: #1f5e3a; }
+    .item-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 6px; }
+    .item-location { font-size: 0.85rem; color: #5f6f82; display: flex; align-items: center; gap: 6px; }
+    .badge-status { font-size: 0.7rem; background: #f1f5f9; padding: 3px 10px; border-radius: 50px; margin-left: 10px; }
+    .stats-grid { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 32px; }
+    .stat-card { background: #f8fafc; padding: 24px; border-radius: 28px; flex: 1; text-align: center; }
+    .stat-number { font-size: 2.8rem; font-weight: 800; color: #1f5e3a; }
+    .login-form { max-width: 480px; margin: 40px auto; background: white; padding: 32px; border-radius: 32px; box-shadow: 0 12px 28px rgba(0,0,0,0.05); }
+    .login-form input { width: 100%; padding: 12px; margin: 12px 0; border-radius: 40px; border: 1px solid #cbd5e1; }
+    .footer { text-align: center; padding: 32px 0 40px; border-top: 1px solid #e2edf2; margin-top: 20px; color: #5c6f87; }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; visibility: hidden; opacity: 0; transition: 0.2s; }
+    .modal-overlay.active { visibility: visible; opacity: 1; }
+    .modal-container { background: white; max-width: 500px; width: 90%; border-radius: 32px; padding: 28px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border-radius: 20px; border: 1.5px solid #e2edf2; }
+    .radio-group { display: flex; gap: 24px; margin-top: 8px; }
+    .modal-buttons { display: flex; justify-content: flex-end; gap: 14px; margin-top: 28px; }
+    .btn-cancel { background: #e2e8f0; border: none; padding: 8px 20px; border-radius: 40px; cursor: pointer; }
+    .btn-submit { background: #1f5e3a; color: white; border: none; padding: 8px 20px; border-radius: 40px; cursor: pointer; }
+    #userInfo { font-weight: 600; color: #1f5e3a; margin-left: 15px; }
+    @media (max-width: 780px) { .nav-wrapper { flex-direction: column; align-items: center; } .hero h2 { font-size: 1.8rem; } }
+  </style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="container">
+    <div class="nav-wrapper">
+      <div class="logo">
+        <h1>Lost & Found <i class="fas fa-hand-peace"></i></h1>
+        <span>campus care collective</span>
+      </div>
+      <div class="nav-links">
+        <a data-view="home"><i class="fas fa-home"></i> Home</a>
+        <a data-view="lostItems"><i class="fas fa-search"></i> Lost Items</a>
+        <a data-view="foundItems"><i class="fas fa-box-open"></i> Found Items</a>
+        <a data-view="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a id="loginNavBtn" data-view="login"><i class="fas fa-user-circle"></i> Login</a>
+        <a id="logoutNavBtn" style="display:none;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a id="navReportLink"><i class="fas fa-plus-circle"></i> Report Item</a>
+        <span id="userInfo"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="container">
+  <!-- HOME VIEW -->
+  <div id="homeView" class="view active-view">
+    <div class="hero">
+      <h2>Welcome to College Lost & Found</h2>
+      <p>Find your lost items or help others recover theirs. Together we bring belongings back home.</p>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="reportLostBtnHome"><i class="fas fa-frown-open"></i> Report Lost Item</button>
+        <button class="btn btn-outline" id="reportFoundBtnHome"><i class="fas fa-smile-wink"></i> Report Found Item</button>
+      </div>
+    </div>
+    <div class="dashboard-grid">
+      <div class="col"><div class="col-header lost-header"><h2><i class="fas fa-magnifying-glass"></i> Recent Lost Items</h2><span class="view-link" data-view="lostItems">View All Lost <i class="fas fa-arrow-right"></i></span></div><div class="items-list" id="homeLostList"></div></div>
+      <div class="col"><div class="col-header found-header"><h2><i class="fas fa-hand-peace"></i> Recent Found Items</h2><span class="view-link" data-view="foundItems">View All Found <i class="fas fa-arrow-right"></i></span></div><div class="items-list" id="homeFoundList"></div></div>
+    </div>
+  </div>
+
+  <!-- LOST ITEMS VIEW -->
+  <div id="lostItemsView" class="view"><div style="margin:32px 0 24px;"><h2><i class="fas fa-search"></i> All Lost Items</h2><p>Items reported missing on campus</p></div><div class="items-list" id="fullLostList"></div></div>
+
+  <!-- FOUND ITEMS VIEW -->
+  <div id="foundItemsView" class="view"><div style="margin:32px 0 24px;"><h2><i class="fas fa-box-open"></i> All Found Items</h2><p>Items that have been turned in</p></div><div class="items-list" id="fullFoundList"></div></div>
+
+  <!-- DASHBOARD VIEW -->
+  <div id="dashboardView" class="view"><div style="margin:32px 0 24px;"><h2><i class="fas fa-chart-line"></i> Campus Dashboard</h2><p>Real-time lost & found statistics</p></div><div class="stats-grid"><div class="stat-card"><div class="stat-number" id="totalLostCount">0</div><div>Lost Items Reported</div></div><div class="stat-card"><div class="stat-number" id="totalFoundCount">0</div><div>Found Items Reported</div></div><div class="stat-card"><div class="stat-number" id="recoveryRate">0</div><div>Total Items</div></div></div><div class="col"><h3>📋 Recent Activity</h3><div id="recentActivityList" style="margin-top:16px;"></div></div></div>
+
+  <!-- LOGIN VIEW -->
+  <div id="loginView" class="view"><div class="login-form"><h3><i class="fas fa-key"></i> Student / Staff Login</h3><input type="text" placeholder="Email" id="loginEmail"><input type="password" placeholder="Password" id="loginPassword"><button class="btn btn-primary" style="width:100%; margin-top:12px;" id="doLoginBtn">Sign in</button><p style="margin-top:20px; font-size:0.8rem; text-align:center;">Demo: demo@college.edu / demo123</p></div></div>
+</main>
+
+<footer class="footer"><div class="container"><p><i class="fas fa-heart" style="color:#2b7a4b;"></i> Campus Unity — help someone find what matters most</p><p>© 2026 College Lost & Found | connecting students & staff</p></div></footer>
+
+<!-- REPORT MODAL -->
+<div id="reportModal" class="modal-overlay"><div class="modal-container"><h3><i class="fas fa-clipboard-list"></i> Report an item</h3><form id="reportForm"><div class="form-group"><label>Item type *</label><div class="radio-group"><label><input type="radio" name="itemType" value="lost" id="typeLostRadio"> Lost item</label><label><input type="radio" name="itemType" value="found" id="typeFoundRadio"> Found item</label></div></div><div class="form-group"><label>Item name *</label><input type="text" id="itemName" required></div><div class="form-group"><label>Location *</label><input type="text" id="itemLocation" required></div><div class="form-group"><label>Details</label><textarea id="itemDesc" rows="2"></textarea></div><div class="modal-buttons"><button type="button" class="btn-cancel" id="closeModalBtn">Cancel</button><button type="submit" class="btn-submit">Submit</button></div></form></div></div>
+
+<script>
+  // ----- API HELPER -----
+  async function apiCall(url, options = {}) {
+    const res = await fetch(url, { ...options, credentials: 'include' });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  }
+
+  let currentUser = null;
+
+  // ----- LOAD DATA FROM BACKEND -----
+  async function loadLostItems() { return await apiCall('/api/lost'); }
+  async function loadFoundItems() { return await apiCall('/api/found'); }
+  async function loadActivity() { return await apiCall('/api/activity'); }
+
+  async function refreshAllData() {
+    const [lost, found, activity] = await Promise.all([loadLostItems(), loadFoundItems(), loadActivity()]);
+    renderLostFoundLists(lost, found);
+    renderDashboardStats(lost, found, activity);
+    return { lost, found, activity };
+  }
+
+  function renderLostFoundLists(lostItems, foundItems) {
+    // Home lists (first 3)
+    const homeLost = document.getElementById('homeLostList');
+    const homeFound = document.getElementById('homeFoundList');
+    if (homeLost) homeLost.innerHTML = lostItems.slice(0,3).map(item => `<div class="item-card"><div class="item-icon lost-icon"><i class="fas fa-search"></i></div><div class="item-details"><div class="item-title">${escapeHtml(item.name)} <span class="badge-status">lost</span></div><div class="item-location"><i class="fas fa-map-pin"></i> ${escapeHtml(item.location)}</div><div class="item-location">📝 ${escapeHtml(item.desc.substring(0,60))}</div></div></div>`).join('');
+    if (homeFound) homeFound.innerHTML = foundItems.slice(0,3).map(item => `<div class="item-card"><div class="item-icon found-icon"><i class="fas fa-check-circle"></i></div><div class="item-details"><div class="item-title">${escapeHtml(item.name)} <span class="badge-status">found</span></div><div class="item-location"><i class="fas fa-location-dot"></i> ${escapeHtml(item.location)}</div><div class="item-location">📝 ${escapeHtml(item.desc.substring(0,60))}</div></div></div>`).join('');
+
+    // Full lists
+    const fullLost = document.getElementById('fullLostList');
+    const fullFound = document.getElementById('fullFoundList');
+    if (fullLost) fullLost.innerHTML = lostItems.map(item => `<div class="item-card"><div class="item-icon lost-icon"><i class="fas fa-search"></i></div><div class="item-details"><div class="item-title">${escapeHtml(item.name)}</div><div class="item-location">📍 ${escapeHtml(item.location)}</div><div class="item-location">📝 ${escapeHtml(item.desc)}</div><div class="item-location">🕒 ${escapeHtml(item.reported_at)}</div></div></div>`).join('');
+    if (fullFound) fullFound.innerHTML = foundItems.map(item => `<div class="item-card"><div class="item-icon found-icon"><i class="fas fa-check-circle"></i></div><div class="item-details"><div class="item-title">${escapeHtml(item.name)}</div><div class="item-location">📍 ${escapeHtml(item.location)}</div><div class="item-location">📝 ${escapeHtml(item.desc)}</div><div class="item-location">🕒 ${escapeHtml(item.reported_at)}</div></div></div>`).join('');
+  }
+
+  function renderDashboardStats(lost, found, activity) {
+    const lostCount = document.getElementById('totalLostCount');
+    const foundCount = document.getElementById('totalFoundCount');
+    const recovery = document.getElementById('recoveryRate');
+    if (lostCount) lostCount.innerText = lost.length;
+    if (foundCount) foundCount.innerText = found.length;
+    if (recovery) recovery.innerText = lost.length + found.length;
+
+    const activityDiv = document.getElementById('recentActivityList');
+    if (activityDiv) activityDiv.innerHTML = activity.map(log => `<div style="padding:8px 0; border-bottom:1px solid #eef2f6;"><i class="fas fa-clock"></i> ${escapeHtml(log.message)} <span style="float:right; font-size:0.75rem;">${escapeHtml(log.created_at)} by ${escapeHtml(log.user)}</span></div>`).join('');
+  }
+
+  function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+  // ----- REPORT ITEM -----
+  async function submitReport(type, name, location, desc) {
+    const res = await fetch('/api/report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ type, name, location, desc })
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Report failed');
+    }
+    return await res.json();
+  }
+
+  // ----- LOGIN / LOGOUT / SESSION -----
+  async function checkLoginStatus() {
+    try {
+      const user = await apiCall('/api/me');
+      currentUser = user;
+      document.getElementById('loginNavBtn').style.display = 'none';
+      document.getElementById('logoutNavBtn').style.display = 'inline-flex';
+      document.getElementById('userInfo').innerHTML = `<i class="fas fa-user-check"></i> ${escapeHtml(user.name)}`;
+    } catch(e) {
+      currentUser = null;
+      document.getElementById('loginNavBtn').style.display = 'inline-flex';
+      document.getElementById('logoutNavBtn').style.display = 'none';
+      document.getElementById('userInfo').innerHTML = '';
+    }
+  }
+
+  async function doLogin(email, password) {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email, password })
+    });
+    if (!res.ok) throw new Error('Invalid credentials');
+    const data = await res.json();
+    currentUser = data.user;
+    await checkLoginStatus();
+    switchView('home');
+    refreshAllData();
+    return data;
+  }
+
+  async function doLogout() {
+    await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+    currentUser = null;
+    await checkLoginStatus();
+    switchView('home');
+    refreshAllData();
+  }
+
+  // ----- VIEW SWITCHING -----
+  function switchView(viewId) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
+    document.getElementById(viewId + 'View').classList.add('active-view');
+    if (viewId === 'dashboard' || viewId === 'home' || viewId === 'lostItems' || viewId === 'foundItems') {
+      refreshAllData();
+    }
+  }
+
+  // ----- MODAL HANDLING -----
+  const modal = document.getElementById('reportModal');
+  function openModalWithType(type) {
+    document.getElementById('reportForm').reset();
+    if (type === 'lost') document.getElementById('typeLostRadio').checked = true;
+    else if (type === 'found') document.getElementById('typeFoundRadio').checked = true;
+    modal.classList.add('active');
+  }
+
+  // ----- EVENT LISTENERS -----
+  document.querySelectorAll('[data-view]').forEach(el => {
+    el.addEventListener('click', (e) => { e.preventDefault(); switchView(el.getAttribute('data-view')); });
+  });
+  document.querySelectorAll('.view-link[data-view]').forEach(link => {
+    link.addEventListener('click', () => switchView(link.getAttribute('data-view')));
+  });
+
+  document.getElementById('reportLostBtnHome')?.addEventListener('click', () => openModalWithType('lost'));
+  document.getElementById('reportFoundBtnHome')?.addEventListener('click', () => openModalWithType('found'));
+  document.getElementById('navReportLink')?.addEventListener('click', (e) => { e.preventDefault(); openModalWithType(null); });
+  document.getElementById('closeModalBtn')?.addEventListener('click', () => modal.classList.remove('active'));
+  modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('active'); });
+  document.getElementById('reportForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const type = document.querySelector('input[name="itemType"]:checked')?.value;
+    const name = document.getElementById('itemName').value.trim();
+    const loc = document.getElementById('itemLocation').value.trim();
+    const desc = document.getElementById('itemDesc').value.trim() || "No details";
+    if (!type || !name || !loc) { alert("Please fill all required fields."); return; }
+    try {
+      await submitReport(type, name, loc, desc);
+      modal.classList.remove('active');
+      alert(`✅ ${type === 'lost' ? 'Lost' : 'Found'} item reported! Thank you.`);
+      refreshAllData();
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+
+  document.getElementById('doLoginBtn')?.addEventListener('click', async () => {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pwd = document.getElementById('loginPassword').value.trim();
+    if (!email || !pwd) { alert("Enter email and password"); return; }
+    try {
+      await doLogin(email, pwd);
+      alert(`Welcome ${email}!`);
+    } catch(err) { alert("Login failed: " + err.message); }
+  });
+
+  document.getElementById('logoutNavBtn')?.addEventListener('click', async () => {
+    await doLogout();
+    alert("Logged out");
+  });
+
+  // INIT
+  checkLoginStatus();
+  refreshAllData();
+  switchView('home');
+</script>
+</body>
+</html>
